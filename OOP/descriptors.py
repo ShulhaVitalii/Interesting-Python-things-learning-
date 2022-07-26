@@ -137,3 +137,80 @@ class RegisterForm:
 
 f = RegisterForm('Loggg', 'password', 'email')
 f.show()
+
+
+#######################
+
+class PriceValue:
+    def __init__(self, max_value=10000):
+        self.max_value = max_value
+
+    def validate_value(self, value):
+        if type(value) == int or type(value) == float:
+            if value <= self.max_value:
+                return True
+        return False
+
+    def __set_name__(self, owner, name):
+        self.name = "_" + name
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self.name)
+
+    def __set__(self, instance, value):
+        if self.validate_value(value):
+            setattr(instance, self.name, value)
+
+
+class StringValue:
+    def __init__(self, min_length=2, max_length=50):
+        self.min = min_length
+        self.max = max_length
+
+    def validate_value(self, value):
+        if type(value) == str:
+            if self.min <= len(value) <= self.max:
+                return True
+        return False
+
+    def __set_name__(self, owner, name):
+        self.name = "_" + name
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self.name)
+
+    def __set__(self, instance, value):
+        if self.validate_value(value):
+            setattr(instance, self.name, value)
+
+
+class SuperShop:
+    def __init__(self, name):
+        self.name = name
+        self.goods = []
+
+    def add_product(self, product):
+        self.goods.append(product)
+
+    def remove_product(self, product):
+        self.goods.remove(product)
+
+
+class Product:
+    name = StringValue()
+    price = PriceValue()
+
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+
+shop = SuperShop("У Балакирева")
+shop.add_product(Product("Курс по Python", 0))
+shop.add_product(Product("Курс по Python ООП", 2000))
+for p in shop.goods:
+    print(f"{p.name}: {p.price}")
+
+x = Product('Опа', 100)
+shop.add_product(x)
+shop.remove_product(x)
