@@ -58,3 +58,36 @@ model = Model()
 print(model)
 model.query(id=1, fio='Sergey', old=33)
 print(model)
+
+
+
+###
+
+
+class WordString:
+    def __init__(self, string=''):
+        self.__string = string
+
+    def __len__(self):
+        return len(self.__string.split())
+
+    def __call__(self, *args, **kwargs):
+        return self.__string.split()[args[0]]
+
+    @property
+    def string(self):
+        return self.__string
+    @string.setter
+    def string(self, string):
+        self.__string = string
+
+words = WordString("1 2      3   4 5 6 7")
+print(len(words))
+print(words(2))
+words = WordString()
+words.string = "Курс по Python ООП"
+n = len(words)
+first = "" if n == 0 else words(0)
+print(words.string)
+print(f"Число слов: {n}; первое слово: {first}")
+
