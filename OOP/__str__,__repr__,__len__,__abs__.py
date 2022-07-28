@@ -34,3 +34,27 @@ p = Point(1, -2, -5)
 print(len(p)) # => 3
 print(abs(p)) # => [1, 2, 5]
 
+####
+
+
+class Model:
+    def __init__(self):
+        self.data = {}
+
+    def query(self, **kwargs):
+        for i, v in kwargs.items():
+            self.data[i] = v
+
+    def __str__(self):
+        if self.data is None:
+            return "Model"
+        s = "Model: "
+        for i in self.data:
+            s += f'{i} = {self.data[i]}, '
+        return s[:-2]
+
+
+model = Model()
+print(model)
+model.query(id=1, fio='Sergey', old=33)
+print(model)
