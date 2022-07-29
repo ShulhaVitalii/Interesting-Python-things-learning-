@@ -231,3 +231,50 @@ cmp = Complex(7, 8)
 cmp.real = 3
 cmp.img = 4
 c_abs = abs(cmp)
+
+
+
+###
+
+
+class DeltaClock:
+    def __init__(self, clock1, clock2):
+        self.clock1 = clock1
+        self.clock2 = clock2
+
+    def __str__(self):
+        h = self.clock1.hours - self.clock2.hours if self.clock1.hours > self.clock2.hours else 0
+        m = self.clock1.minutes - self.clock2.minutes if self.clock1.minutes > self.clock2.minutes else 0
+        s = self.clock1.seconds - self.clock2.seconds if self.clock1.seconds > self.clock2.seconds else 0
+
+        return f'{h:02}: {m:02}: {s:02}'
+
+    def __len__(self):
+        return self.clock1.get_time() - self.clock2.get_time() if self.clock1.get_time() - self.clock2.get_time() >0 else 0
+
+
+class Clock:
+    def __init__(self, hours, minutes, seconds):
+        if self.checker(hours):
+            self.hours = hours
+        if self.checker(minutes):
+            self.minutes = minutes
+        if self.checker(seconds):
+            self.seconds = seconds
+
+    @staticmethod
+    def checker(time):
+        if type(time) is int and time >= 0:
+            return True
+        return False
+
+    def get_time(self):
+        return self.hours * 3600 + self.minutes * 60 + self.seconds
+
+dt = DeltaClock(Clock(1, 15, 15), Clock(3, 45, 15))
+
+str_dt = str(dt)
+print(str_dt)
+print(dt) # 01: 30: 00
+len_dt = len(dt) # 5400
+print(len_dt)
