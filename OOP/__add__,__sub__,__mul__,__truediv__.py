@@ -118,3 +118,112 @@ print(res_3.lst)
 a = NewList([2, 3])
 res_4 = [1, 2, 2, 3] - a # NewList: [1, 2]
 print(res_4.get_list())
+
+
+
+######
+
+
+class ListMath:
+    def __init__(self, lst=None):
+        self.lst_math = [x for x in lst if type(x) in (int, float)] if lst and type(lst) == list else []
+
+    def get_list(self):
+        return self.lst_math
+
+    @staticmethod
+    def checker(other):
+        if not isinstance(other, (int, float)):
+            raise ArithmeticError('Should be int or float')
+        return True
+
+    def __add__(self, other):
+        self.checker(other)
+        return ListMath([i + other for i in self.get_list()[:]])
+
+    def __radd__(self, other):
+        self.checker(other)
+        return ListMath([other + i for i in self.get_list()[:]])
+
+    def __iadd__(self, other):
+        self.checker(other)
+        self.lst_math = [i + other for i in self.get_list()[:]]
+        return self
+
+    def __sub__(self, other):
+        self.checker(other)
+        return ListMath([i - other for i in self.get_list()[:]])
+
+    def __rsub__(self, other):
+        self.checker(other)
+        return ListMath([other - i for i in self.get_list()[:]])
+
+    def __isub__(self, other):
+        self.checker(other)
+        self.lst_math = [i - other for i in self.get_list()[:]]
+        return self
+
+    def __mul__(self, other):
+        self.checker(other)
+        return ListMath([i * other for i in self.get_list()[:]])
+
+    def __rmul__(self, other):
+        self.checker(other)
+        return ListMath([other * i for i in self.get_list()[:]])
+
+    def __imul__(self, other):
+        self.checker(other)
+        self.lst_math = [i * other for i in self.get_list()[:]]
+        return self
+
+    def __truediv__(self, other):
+        self.checker(other)
+        if other == 0:
+            raise 'Should be > 0'
+        return ListMath([i / other for i in self.get_list()[:]])
+
+    def __rtruediv__(self, other):
+        self.checker(other)
+        if other == 0:
+            raise 'Should be > 0'
+        return ListMath([other / i for i in self.get_list()[:]])
+
+    def __itruediv__(self, other):
+        self.checker(other)
+        if other == 0:
+            raise 'Should be > 0'
+        self.lst_math = [i / other for i in self.get_list()[:]]
+        return self
+
+
+lst1 = ListMath()
+lp = [1, False, 2, -5, "abc", 7]
+lst2 = ListMath(lp)
+lst3 = ListMath(lp)
+
+assert id(lst2.lst_math) != id(lst3.lst_math), "внутри объектов класса ListMath должна создаваться копия списка"
+
+assert lst1.lst_math == [] and lst2.lst_math == [1, 2, -5, 7], "неверные значения в списке объекта класса ListMath"
+
+res1 = lst2 + 76
+lst = ListMath([1, 2, 3])
+lst += 5
+assert lst.lst_math == [6, 7, 8] and res1.lst_math == [77, 78, 71, 83], "неверные значения, полученные при операциях сложения"
+
+lst = ListMath([0, 1, 2])
+res3 = lst - 76
+res4 = 7 - lst
+assert res3.lst_math == [-76, -75, -74] and res4.lst_math == [7, 6, 5], "неверные значения, полученные при операциях вычитания"
+
+lst -= 3
+assert lst.lst_math == [-3, -2, -1], "неверные значения, полученные при операции вычитания -="
+
+lst = ListMath([1, 2, 3])
+res5 = lst * 5
+res6 = 3 * lst
+lst *= 4
+assert res5.lst_math == [5, 10, 15] and res6.lst_math == [3, 6, 9], "неверные значения, полученные при операциях умножения"
+assert lst.lst_math == [4, 8, 12], "неверные значения, полученные при операциях умножения"
+
+lst = lst / 2
+lst /= 13.0
