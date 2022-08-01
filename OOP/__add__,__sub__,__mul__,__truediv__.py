@@ -33,6 +33,58 @@ class Clock:
 
     def __iadd__(self, other):   # for c1 += 100
         print('__iadd__')
+        
+        
+############
+
+
+
+class Lib:
+    def __init__(self):
+        self.book_list = []
+
+    def __add__(self, other):
+        if not isinstance(other, Book):
+            raise TypeError('Wrong Book type, should be Book')
+        self.book_list.append(other)
+        return self
+
+    def __sub__(self, other):
+        if not isinstance(other, (int, Book)):
+            raise TypeError('Wrong type, should be Book or position number')
+        if type(other) is Book:
+            self.book_list.remove(other)
+        else:
+            del self.book_list[other]
+        return self
+
+    def __len__(self):
+        return len(self.book_list)
+
+class Book:
+    def __init__(self, title, author, year):
+        self.title = title
+        self.author = author
+        self.year = year
+
+
+lib = Lib()
+book = Book('About Me', 'Me', 2022)
+
+book1 = Book('About Me', 'Me', 2022)
+book2 = Book('About Me', 'Me', 2022)
+book3 = Book('About Me', 'Me', 2022)
+lib = lib + book
+lib = lib + book2   # добавление новой книги в библиотеку
+lib = lib + book3
+print(len(lib))
+lib += book1
+lib = lib - book   # удаление книги book из библиотеки (удаление происходит по ранее созданному объекту book класса Book)
+lib -= book1
+lib = lib - 0   # удаление книги по ее порядковому номеру (индексу: отсчет начинается с нуля)
+lib -= 0
+print(len(lib))
+
         if not isinstance(other, (int, Clock)):
             raise ArithmeticError('Should be integer or Clock obj on right')
 
