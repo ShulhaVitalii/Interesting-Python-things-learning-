@@ -241,3 +241,108 @@ for i in text.split():
         if word == i:
             counter += 1
 print(counter)
+
+
+
+####
+
+
+class CentralBank:
+    rates = {'rub': 72.5, 'dollar': 1.0, 'euro': 1.15}
+
+    def __new__(cls, *args, **kwargs):
+        return None
+
+    @classmethod
+    def register(cls, money):
+        money.cb = cls.rates
+
+
+class Money:
+    def __init__(self, money=0.0):
+        self.cb = None
+        self.volume = money
+
+    @property
+    def cb(self):
+        return self.__cb
+
+    @cb.setter
+    def cb(self, cb):
+        self.__cb = cb
+
+    @property
+    def volume(self):
+        return self.__volume
+
+    @volume.setter
+    def volume(self, volume):
+        if type(volume) in (int, float):
+            self.__volume = volume
+
+    def volume_to_r(self):
+        if type(self) == MoneyR:
+            volume = self.volume * self.cb['dollar']
+        elif type(self) == MoneyD:
+            volume = self.volume * self.cb['rub']
+        elif type(self) == MoneyE:
+            volume = (self.volume / self.cb['euro']) * self.cb['rub']
+        return volume
+
+    def checker(self, one, two):
+        if self.cb is None:
+            raise ValueError("Неизвестен курс валют.")
+        one = one.volume_to_r()
+        two = two.volume_to_r()
+        return one, two
+
+    def __eq__(self, other):
+        one, two = self.checker(self, other)
+        return two - two * 0.1 <= one <= two + two * 0.1
+
+    def __lt__(self, other):
+        one, two = self.checker(self, other)
+        return one < two
+
+    def __le__(self, other):
+        one, two = self.checker(self, other)
+        return one <= two
+
+
+class MoneyR(Money):
+    pass
+
+
+class MoneyD(Money):
+    pass
+
+
+class MoneyE(Money):
+    pass
+
+
+
+cb = CentralBank()
+print(cb)   # None
+
+CentralBank.rates = {'rub': 72.5, 'dollar': 1.0, 'euro': 1.15}
+
+r = MoneyR(50000)
+d = MoneyD(800)
+e = MoneyE(500)
+
+assert r.volume == 50000 and d.volume == 800 and e.volume == 500, "атрибут volume в кошельках принимает неверное значение"
+
+CentralBank.register(r)
+CentralBank.register(d)
+CentralBank.register(e)
+print(r.volume)
+assert r.volume == 50000 and d.volume == 800 and e.volume == 500, "атрибут volume в кошельках принимает неверное значение"
+assert d > r and e < d, "неверно отработали операторы сравнения > и <"
+
+d1 = MoneyD(800)
+d2 = MoneyD(800.005)
+CentralBank.register(d1)
+CentralBank.register(d2)
+assert d1 == d2, "оператор == вернул False при значениях средств 800 и 800.0005 в кошельках"
+
