@@ -167,3 +167,41 @@ lst_shop_sorted = sorted(lst_shop, key=lambda x: x.dim)
 
 print([i.name for i in lst_shop_sorted])
 
+
+#####################
+
+
+stich = ["Я к вам пишу – чего же боле?",
+        "Что я могу еще сказать?",
+        "Теперь, я знаю, в вашей воле",
+        "Меня презреньем наказать.",
+        "Но вы, к моей несчастной доле",
+        "Хоть каплю жалости храня,",
+        "Вы не оставите меня."]
+
+
+def get_list(s):
+    while '  ' in s:
+        s.replace('  ', ' ')
+    return [i.strip('–?!,.;') for i in s.split() if i not in '–?!,.;']
+
+
+stich = [get_list(i) for i in stich]
+
+
+class StringText:
+    def __init__(self, lst_words):
+        self.lst_words = lst_words
+
+    def __lt__(self, other):
+        return len(self.lst_words) < len(other.lst_words)
+
+    def __le__(self, other):
+        return len(self.lst_words) <= len(other.lst_words)
+
+
+lst_text = [StringText(s) for s in stich]
+lst_text_sorted = [' '.join(i.lst_words) for i in sorted(lst_text, key=lambda x: x, reverse=True)]
+
+print(*lst_text_sorted, sep='\n')
+
