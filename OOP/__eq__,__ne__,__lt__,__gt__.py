@@ -96,3 +96,74 @@ print(res_eq)
 print(len(track1))
 print(len(track2))
 
+
+############
+
+
+class Dimensions:
+
+    MIN_DIMENSION = 10
+    MAX_DIMENSION = 10000
+
+    def __init__(self, a, b, c):
+        self.a = a
+        self.b = b
+        self.c = c
+
+    @classmethod
+    def num_checker(cls, num):
+        return True if cls.MIN_DIMENSION <= num <= cls.MAX_DIMENSION else False
+
+    @property
+    def a(self):
+        return self.__a
+
+    @a.setter
+    def a(self, num):
+        if self.num_checker(num):
+            self.__a = num
+
+    @property
+    def b(self):
+        return self.__b
+
+    @b.setter
+    def b(self, num):
+        if self.num_checker(num):
+            self.__b = num
+
+    @property
+    def c(self):
+        return self.__c
+
+    @c.setter
+    def c(self, num):
+        if self.num_checker(num):
+            self.__c = num
+
+    def get_volume(self):
+        return self.a * self.b * self.c
+
+    def __lt__(self, other):
+        return self.get_volume() < other.get_volume()
+
+    def __le__(self, other):
+        return self.get_volume() <= other.get_volume()
+
+
+class ShopItem:
+    def __init__(self, name, price, dim):
+        self.name = name
+        self.price = price
+        self.dim = dim
+
+
+trainers = ShopItem('кеды', 1024, Dimensions(40, 30, 120))
+umbrella = ShopItem('зонт', 500.24, Dimensions(10, 20, 50))
+fridge = ShopItem('холодильник', 40000, Dimensions(2000, 600, 500))
+chair = ShopItem('табуретка', 2000.99, Dimensions(500, 200, 200))
+lst_shop = (trainers, umbrella, fridge, chair)
+lst_shop_sorted = sorted(lst_shop, key=lambda x: x.dim)
+
+print([i.name for i in lst_shop_sorted])
+
