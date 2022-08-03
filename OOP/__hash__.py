@@ -79,4 +79,82 @@ if v[0][0].name.strip() == "Системный блок":
 if v[0][0].name.strip() == "X-box":
     assert v[0][1] == 2 and v[1][1] == 1 and v[2][1] == 2 and len(v) == 3, "неверные значения в словаре shop_items"
     
-    
+ 
+
+######
+
+
+class DataBase:
+    def __init__(self, path: str):
+        self.path = path
+        self.dict_db = {}
+
+    def write(self, record):
+        print(record.fio)
+        if hash(record) not in [hash(i) for i in self.dict_db]:
+            self.dict_db[record] = [record]
+        else:
+            for i in [i for i in self.dict_db]:
+                if hash(i) == hash(record):
+                    self.dict_db[i].append(record)
+
+    def read(self, pk):
+        for r in self.dict_db:
+            if r.pk == pk:
+                return r
+
+
+class Record:
+    num = (i for i in range(1, 1000000))
+
+    def __init__(self, fio: str, descr: str, old: int):
+        self.pk = next(self.num)
+        self.fio = fio
+        self.descr = descr
+        self.old = old
+
+    def __hash__(self):
+        return hash((self.fio.lower(), int(self.old)))
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+
+
+
+db = DataBase('Path')
+lst_in = ['Балакирев С.М.; программист; 33',
+'Кузнецов А.В.; разведчик-нелегал; 35',
+'Суворов А.В.; полководец; 42',
+'Иванов И.И.; фигурант всех подобных списков; 26',
+'Балакирев С.М.; преподаватель; 33']
+for i in lst_in:
+    i = i.split(';')
+    record = Record(i[0].strip(), i[1].strip(), int(i[2].strip()))
+    db.write(record)
+    print('record hash : ', hash(record))
+
+
+db22345 = DataBase('123')
+r1 = Record('fio', 'descr', 10)
+r2 = Record('fio', 'descr', 10)
+assert r1.pk != r2.pk, "равные значения атрибута pk у разных объектов класса Record"
+
+db22345.write(r2)
+r22 = db22345.read(r2.pk)
+assert r22.pk == r2.pk and r22.fio == r2.fio and r22.descr == r2.descr and r22.old == r2.old, "при операциях write и read прочитанный объект имеет неверные значения атрибутов"
+
+assert len(db22345.dict_db) == 1, "неверное число объектов в словаре dict_db"
+
+fio = lst_in[0].split(';')[0].strip()
+v = list(db.dict_db.values())
+if fio == "Балакирев С.М.":
+    assert len(v[0]) == 2 and len(v[1]) == 1 and len(v[2]) == 1 and len(
+        v[3]) == 1, "неверно сформирован словарь dict_db"
+
+if fio == "Гейтс Б.":
+    assert len(v[0]) == 2 and len(v[1]) == 2 and len(v[2]) == 1 and len(
+        v[3]) == 1, "неверно сформирован словарь dict_db"
+
+
+   
