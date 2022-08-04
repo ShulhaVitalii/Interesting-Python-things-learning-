@@ -38,6 +38,78 @@ class Clock:
 ############
 
 
+class Vector:
+    """
+    https://stepik.org/lesson/701992/step/10?unit=702093
+    """
+    def __init__(self, *args):
+        if all(map(lambda x: type(x) in (int, float), [*args])):
+            self.args = args
+        else:
+            raise TypeError('Coord should be in int, float')
+
+    @staticmethod
+    def __coord_checker(one, two):
+        if len(one.args) != len(two.args):
+            raise ArithmeticError('размерности векторов не совпадают')
+
+    def __eq__(self, other):
+        self.__coord_checker(self, other)
+        for i in range(len(self.args)):
+            if self.args[i] != other.args[i]:
+                return False
+        return True
+
+    def __add__(self, other):
+        self.__coord_checker(self, other)
+        new_coords = [self.args[i] + other.args[i] for i in range(len(self.args))]
+        return Vector(*new_coords)
+
+    def __iadd__(self, other):
+        if type(other) in (int, float):
+            self.args = [i + other for i in self.args]
+        elif type(other) == Vector:
+            self.args = [self.args[i] + other.args[i] for i in range(len(self.args))]
+        return self
+
+    def __isub__(self, other):
+        if type(other) in (int, float):
+            self.args = [i - other for i in self.args]
+        elif type(other) == Vector:
+            self.args = [self.args[i] - other.args[i] for i in range(len(self.args))]
+        return self
+
+    def __sub__(self, other):
+        self.__coord_checker(self, other)
+        new_coords = [self.args[i] - other.args[i] for i in range(len(self.args))]
+        return Vector(*new_coords)
+
+    def __mul__(self, other):
+        self.__coord_checker(self, other)
+        new_coords = [self.args[i] * other.args[i] for i in range(len(self.args))]
+        return Vector(*new_coords)
+
+v1 = Vector(1, 2, 3)
+v2 = Vector(4, 5, 6)
+print((v1 + v2).args)  # [5, 7, 9]
+print((v1 - v2).args)  # [-3, -3, -3]
+print((v1 * v2).args)  # [4, 10, 18]
+
+v1 += 10
+print(v1.args)  # [11, 12, 13]
+v1 -= 10
+print(v1.args)  # [1, 2, 3]
+v1 += v2
+print(v1.args)  # [5, 7, 9]
+v2 -= v1
+print(v2.args)  # [-1, -2, -3]
+
+print(v1 == v2)  # False
+print(v1 != v2)  # True
+
+
+##########
+
 
 class Lib:
     def __init__(self):
