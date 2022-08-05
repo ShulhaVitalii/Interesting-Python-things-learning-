@@ -37,3 +37,30 @@ del s1[2]
 s1[10] = 5
 print(s1.marks)
 
+##########
+
+
+class Record:
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            self.__dict__[k] = v
+
+    def __getitem__(self, item):
+        keys = [*self.__dict__.keys()]
+
+        if 0 <= item < len(self.__dict__):
+            key = keys[item]
+            return self.__dict__[key]
+        else:
+            raise IndexError('неверный индекс поля')
+
+    def __setitem__(self, key, value):
+        keys = [*self.__dict__.keys()]
+
+        if 0 <= key < len(self.__dict__):
+            k = keys[key]
+            self.__dict__[k] = value
+        else:
+            raise IndexError('неверный индекс поля')
+            
+            
