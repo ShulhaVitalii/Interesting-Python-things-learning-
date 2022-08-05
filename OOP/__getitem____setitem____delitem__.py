@@ -99,3 +99,53 @@ tr[2] = 60
 c, s = tr[2]
 print(c, s)  # => (63.45, 1.24) 60
 res = tr[3]  # IndexError
+
+
+#########
+
+
+class Array:
+    def __init__(self, max_length, cell):
+        self.cell = cell
+        self.l = [self.cell() for _ in range(max_length)]
+
+    def __getitem__(self, item):
+        if 0 <= item < len(self.l):
+            return self.l[item].val
+        else:
+            raise IndexError('неверный индекс для доступа к элементам массива')
+
+    def __setitem__(self, key, value):
+        if 0 <= key < len(self.l):
+            self.l[key].val = value
+        else:
+            raise IndexError('неверный индекс для доступа к элементам массива')
+
+    def __repr__(self):
+        s = [str(i.val) for i in self.l]
+        return ' '.join(s)
+
+
+class Integer:
+    def __init__(self, start_value=0):
+        self.val = start_value
+
+    @property
+    def val(self):
+        return self.__value
+
+    @val.setter
+    def val(self, val):
+        if type(val) == int:
+            self.__value = val
+        else:
+            raise ValueError('должно быть целое число')
+
+ar_int = Array(20, cell=Integer)
+assert ar_int[18] == 0, "начальные значения в ячейках массива (в объектах класса Integer) должны быть равны 0"
+print(ar_int[3])
+print(ar_int) # должны отображаться все значения массива в одну строчку через пробел
+ar_int[1] = 10
+print(ar_int)
+# ar_int[1] = 10.5 # должно генерироваться исключение ValueError
+# ar_int[10] = 1 # должно генерироваться исключение IndexError
