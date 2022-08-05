@@ -149,3 +149,115 @@ ar_int[1] = 10
 print(ar_int)
 # ar_int[1] = 10.5 # должно генерироваться исключение ValueError
 # ar_int[10] = 1 # должно генерироваться исключение IndexError
+
+
+
+############
+
+
+class IntegerValue:
+    @classmethod
+    def verify_val(cls, coord):
+        if type(coord) != int:
+            raise ValueError('возможны только целочисленные значения')
+
+    def __set_name__(self, owner, name):
+        self.name = "_" + name
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self.name)
+
+    def __set__(self, instance, value):
+        self.verify_val(value)
+        setattr(instance, self.name, value)
+
+
+class StringValue:
+    @classmethod
+    def verify_val(cls, coord):
+        if type(coord) != str:
+            raise ValueError('возможны только string значения')
+
+    def __set_name__(self, owner, name):
+        self.name = "_" + name
+
+    def __get__(self, instance, owner):
+        return getattr(instance, self.name)
+
+    def __set__(self, instance, value):
+        self.verify_val(value)
+        setattr(instance, self.name, value)
+
+
+class TableValues:
+    def __init__(self, rows, cols, cell):
+        if cell:
+            self.cells = tuple(tuple(cell() for _ in range(cols))for _ in range(rows))
+        else:
+            raise ValueError('параметр cell не указан')
+
+    def __getitem__(self, item):
+        if 0 <= item[0] < len(self.cells) and 0 <= item[1] < len(self.cells):
+            return self.cells[item[0]][item[1]].value
+        else:
+            raise IndexError('неверный индекс для доступа к элементам массива')
+
+    def __setitem__(self, key, value):
+        if 0 <= key[0] < len(self.cells) and 0 <= key[1] < len(self.cells):
+            self.cells[key[0]][key[1]].value = value
+        else:
+            raise IndexError('неверный индекс для доступа к элементам массива')
+
+
+class CellInteger:
+    value = IntegerValue()
+
+    def __init__(self, start_value=0):
+        self.value = start_value
+
+
+class CellString:
+    value = StringValue()
+
+    def __init__(self, start_value='_'):
+        self.value = start_value
+
+table = TableValues(2, 3, cell=CellInteger)
+print(table[0, 1])
+table[1, 1] = 10
+# table[0, 0] = 1.45 # генерируется исключение ValueError
+
+# вывод таблицы в консоль
+for row in table.cells:
+    for x in row:
+        print(x.value, end=' ')
+    print()
+
+
+tb1 = TableValues(3, 2, cell=CellString)
+tb1[0, 0] = '1'
+tb1[1, 1] = '2'
+
+for row in tb1.cells:
+    for x in row:
+        print(x.value, end=' ')
+    print()
+
+
+tb = TableValues(3, 2, cell=CellInteger)
+tb[0, 0] = 1
+assert tb[0, 0] == 1, "некорректно работает запись и/или считывание значения в ячейку таблицы по индексам"
+
+try:
+    tb[2, 1] = 1.5
+except ValueError:
+    assert True
+else:
+    assert False, "не сгенерировалось исключение ValueError"
+
+for row in tb.cells:
+    for x in row:
+        assert isinstance(x, CellInteger), "коллекция cells должна содержать только объекты класса  CellInteger"
+
+cell = CellInteger(10)
+assert cell.value == 10, "дескриптор value вернул неверное значение"
