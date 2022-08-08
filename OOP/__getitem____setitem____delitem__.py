@@ -261,3 +261,34 @@ for row in tb.cells:
 
 cell = CellInteger(10)
 assert cell.value == 10, "дескриптор value вернул неверное значение"
+
+
+#####
+
+
+class RadiusVector:
+    """
+    P.S. При передаче среза в магических методах __setitem__() и __getitem__() параметр индекса становится объектом 
+    класса slice. Его можно указывать непосредственно в квадратных скобках упорядоченных коллекций 
+    (списков, кортежей и т.п.).
+    """
+    def __init__(self, *args):
+        self.coords = [*args]
+
+    def __getitem__(self, item):
+        res = self.coords[item]
+        return res if isinstance(res, (int, float)) else tuple(res)
+
+    def __setitem__(self, key, value):
+        self.coords[key] = value
+        return self
+
+
+v = RadiusVector(1, 1, 1, 1)
+print(v[1]) # 1
+print(v[1:3]) # 1
+v[:] = 1, 2, 3, 4
+print(v[2]) # 3
+print(v[1:]) # (2, 3, 4)
+v[0] = 10.5
+
