@@ -466,3 +466,86 @@ else:
     assert False, "не сгенерировалось исключение ValueError при замене предмета в объекте класса Bag по индексу"
 
     
+########
+
+
+class SparseTable:
+    def __init__(self):
+        self.rows = 0
+        self.cols = 0
+        self.d = {}
+
+    def add_data(self, row, col, data):
+        self.d[(row, col)] = data
+        if self.rows <= row:
+            self.rows = row+1
+        if self.cols <= col:
+            self.cols = col+1
+
+    def remove_data(self, row, col):
+        try:
+            del self.d[(row, col)]
+            m1 = max([i[0] for i in self.d.keys()])
+            m2 = max([i[1] for i in self.d.keys()])
+            self.rows = m1+1
+            self.cols = m2+1
+
+        except KeyError:
+            raise IndexError('ячейка с указанными индексами не существует')
+
+    def checker(self, row, col):
+        if (row, col) not in self.d:
+            raise ValueError('данные по указанным индексам отсутствуют')
+
+    def __getitem__(self, item):
+        self.checker(item[0], item[1])
+        return self.d[(item[0], item[1])].value
+
+    def __setitem__(self, key, value):
+        if (key[0], key[1]) not in self.d:
+            self.add_data(key[0], key[1], Cell(value))
+        else:
+            self.d[key[0], key[1]] = self.d.setdefault((key[0], key[1]), Cell(value))
+        return self
+
+
+class Cell:
+    def __init__(self, value):
+        self.value = value
+
+
+st = SparseTable()
+st.add_data(2, 5, Cell(25))
+st.add_data(1, 1, Cell(11))
+assert st.rows == 3 and st.cols == 6, "неверные значения атрибутов rows и cols"
+
+try:
+    v = st[3, 2]
+except ValueError:
+    assert True
+else:
+    assert False, "не сгенерировалось исключение ValueError"
+
+st[3, 2] = 100
+assert st[3, 2] == 100, "неверно отработал оператор присваивания нового значения в ячейку таблицы"
+assert st.rows == 4 and st.cols == 6, "неверные значения атрибутов rows и cols"
+
+st.remove_data(1, 1)
+
+assert st.rows == 4 and st.cols == 6, "неверные значения атрибутов rows и cols"
+try:
+    v = st[1, 1]
+except ValueError:
+    assert True
+else:
+    assert False, "не сгенерировалось исключение ValueError"
+
+try:
+    st.remove_data(1, 1)
+except IndexError:
+    assert True
+else:
+    assert False, "не сгенерировалось исключение IndexError"
+
+d = Cell('5')
+assert d.value == '5', "неверное значение атрибута value в объекте класса Cell, возможно, некорректно работает инициализатор класса"
