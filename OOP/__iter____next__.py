@@ -131,3 +131,27 @@ for x in it:  # последовательный перебор всех эле�
 it_iter = iter(it)
 x = next(it_iter)
 
+#########
+
+
+class IterColumn:
+    def __init__(self, lst, column):
+        self._lst = lst
+        self._column = column
+
+    def __iter__(self):
+        for i in range(len(self._lst)):
+            for j in range(len(self._lst[i])):
+                if j == self._column:
+                    yield self._lst[i][j]
+
+lst = [['x00', 'x01', 'x02'],
+       ['x10', 'x11', 'x12'],
+       ['x20', 'x21', 'x22'],
+       ['x30', 'x31', 'x32']]
+
+it = IterColumn(lst, 1)
+for x in it:  # последовательный перебор всех элементов столбца списка: x01, x11, ..., xM2
+    print(x)
+    
+    
