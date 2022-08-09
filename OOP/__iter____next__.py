@@ -155,3 +155,50 @@ for x in it:  # последовательный перебор всех эле�
     print(x)
     
     
+#########
+
+class TableValues:
+    def __init__(self, rows, cols, type_data=int):
+        self.type_data = type_data
+        self.table = [[Cell(0) for _ in range(rows)]for _ in range(cols)]
+
+    def __getitem__(self, item):
+        try:
+            return self.table[item[0]][item[1]].data
+        except IndexError:
+            raise IndexError('неверный индекс')
+
+    def __setitem__(self, key, value):
+        if type(value) != self.type_data:
+            raise TypeError('неверный тип присваиваемых данных')
+        try:
+            self.table[key[0]][key[1]].data = value
+        except IndexError:
+            raise IndexError('неверный индекс')
+
+    def __iter__(self):
+        for i in range(len(self.table)):
+            yield (k.data for k in self.table[i])
+
+
+class Cell:
+    def __init__(self, data):
+        self.data = data
+
+    @property
+    def data(self):
+        return self.__data
+
+    @data.setter
+    def data(self, data):
+        self.__data = data
+
+
+table = TableValues(5, 5, int)
+print(table[1, 1])
+table[1, 1] = 5
+print(table[1, 1])
+for row in table:  # перебор по строкам
+    for value in row: # перебор по столбцам
+        print(value, end=' ')  # вывод значений ячеек в консоль
+    print()
