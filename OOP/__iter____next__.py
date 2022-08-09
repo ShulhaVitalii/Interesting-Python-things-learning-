@@ -107,3 +107,27 @@ for v in pers:
     print(v)
 pers[5] = 123 # IndexError
 
+
+########
+
+
+class TriangleListIterator:
+    def __init__(self, lst):
+        self._lst = lst
+
+    def __iter__(self):
+        for i in range(len(self._lst)):
+            for j in range(i+1):
+                yield self._lst[i][j]
+
+
+lst = [['x00'],
+       ['x10', 'x11'],
+       ['x20', 'x21', 'x22'],
+       ['x30', 'x31', 'x32', 'x33']]
+it = TriangleListIterator(lst)
+for x in it:  # последовательный перебор всех элементов списка: x00, x10, x11, x20, ...
+    print(x)
+it_iter = iter(it)
+x = next(it_iter)
+
