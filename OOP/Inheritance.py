@@ -298,3 +298,24 @@ assert type(
     v) == VectorInt, "при сложении вектором с целочисленными координатами должен формироваться объект класса VectorInt"
 v = v1 + v3
 assert type(v) == Vector, "при сложении вектором с вещественными координатами должен формироваться объект класса Vector"
+
+
+
+#########
+
+
+class Tuple(tuple):
+    def __init__(self, iter_obj):
+        self.iter_obg = tuple(i for i in iter_obj)
+
+    def __add__(self, other):
+        other = tuple(i for i in other)
+        return Tuple(self.iter_obg + other)
+
+
+t = Tuple([1, 2, 3])
+t = t + "Python"
+print(t)   # (1, 2, 3, 'P', 'y', 't', 'h', 'o', 'n')
+t = (t + "Python") + "ООП"
+print(t)
+
