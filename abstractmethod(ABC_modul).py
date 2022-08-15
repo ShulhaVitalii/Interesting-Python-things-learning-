@@ -52,3 +52,92 @@ form = ModelForm("Логин", "Пароль")
 print(form.get_pk())
 
 
+#########
+
+
+"""
+https://stepik.org/lesson/701999/step/9?unit=702100
+
+abstractmethod - using for mandatory override a method in a child class. Else raise error like 'TypeError: Can't 
+instantiate abstract class ModelForm with abstract method get_pk'
+
+Подвиг 8. С помощью модуля abc можно определять не только абстрактные методы, но и абстрактные объекты-свойства
+ (property). Делается это следующим образом:
+
+from abc import ABC, abstractmethod
+
+
+class Transport(ABC):
+    @abstractmethod
+    def go(self):
+        'Метод для перемещения транспортного средства'
+
+    @property
+    @abstractmethod
+    def speed(self):
+        'Абстрактный объект-свойство'
+"""
+
+
+class CountryInterface(ABC):
+    @property
+    @abstractmethod
+    def name(self):
+        return
+
+    @property
+    @abstractmethod
+    def population(self):
+        return
+
+    @property
+    @abstractmethod
+    def square(self):
+        return
+
+    @abstractmethod
+    def get_info(self):
+        return
+
+
+class Country(CountryInterface):
+
+    def __init__(self, name, population, square):
+        self.name = name
+        self.population = population
+        self.square = square
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, name):
+        self.__name = name
+
+    @property
+    def population(self):
+        return self.__population
+
+    @population.setter
+    def population(self, population):
+        self.__population = population
+
+    @property
+    def square(self):
+        return self.__square
+
+    @square.setter
+    def square(self, square):
+        self.__square = square
+
+    def get_info(self):
+        return f"{self.name}: {self.square}, {self.population}"
+
+
+country = Country("Orkostan", 140000000, 324005489.55)
+name = country.name
+pop = country.population
+country.population = 150000000
+country.square = 354005483.0
+print(country.get_info())  # Orkostan: 354005483.0, 150000000
