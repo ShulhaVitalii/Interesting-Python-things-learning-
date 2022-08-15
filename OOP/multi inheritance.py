@@ -99,3 +99,49 @@ digits = [PrimeNumber(3), PrimeNumber(1), PrimeNumber(4), FloatPositive(1.5), Fl
 lst_positive = [i for i in digits if isinstance(i, Positive)]
 lst_float = [i for i in digits if isinstance(i, Float)]
 
+
+#######
+
+
+class ShopItem:
+    ID_SHOP_ITEM = 0
+
+    def __init__(self):
+        super().__init__()
+        ShopItem.ID_SHOP_ITEM += 1
+        self._id = ShopItem.ID_SHOP_ITEM
+
+    def get_pk(self):
+        return self._id
+
+
+class ShopGenericView:
+    def __str__(self):
+        s = (f'{k}: {v}' for k, v in self.__dict__.items())
+        return '\n'.join(s)
+
+    def __repr__(self):
+        s = (f'{k}: {v}' for k, v in self.__dict__.items())
+        return '\n'.join(s)
+
+
+class ShopUserView:
+    def __str__(self):
+        s = (f'{k}: {v}' for k, v in self.__dict__.items() if k != '_id')
+        return '\n'.join(s)
+
+    def __repr__(self):
+        s = (f'{k}: {v}' for k, v in self.__dict__.items() if k != '_id')
+        return '\n'.join(s)
+
+
+class Book(ShopItem, ShopUserView):
+    def __init__(self, title, author, year):
+        super().__init__()
+        self._title = title
+        self._author = author
+        self._year = year
+
+
+book = Book("Python ООП", "Балакирев", 2022)
+print(book)
