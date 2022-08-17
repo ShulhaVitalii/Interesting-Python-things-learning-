@@ -309,3 +309,150 @@ else:
     assert False, "не сгенерировалось исключение TypeError при вызове метода is_collision() для прямоугольников Rect(3, 2, 2, 5) и Rect(1, 4, 6, 2)"
 
 
+#########
+
+class ValidatorString:
+    def __init__(self, min_length, max_length, chars):
+        self._min = min_length
+        self._max = max_length
+        self.chars = chars
+
+    def is_valid(self, string):
+        if self.chars == '':
+            return
+
+        # if self._min > len(string) or len(string) > self._max:
+        if self._max < len(string) < self._min:
+            raise ValueError('недопустимая строка')
+
+        for i in self.chars:
+            if i in string:
+                return
+        raise ValueError('недопустимая строка')
+
+
+class LoginForm:
+    def __init__(self, login_validator, password_validator):
+        self.lv = login_validator
+        self.pv = password_validator
+        self._login = self._password = None
+
+    def form(self, request):
+        if 'login' not in request or 'password' not in request:
+            raise TypeError('в запросе отсутствует логин или пароль')
+
+        self.lv.is_valid(request['login'])
+        self.pv.is_valid(request['password'])
+        self._login = request['login']
+        self._password = request['password']
+
+
+login_v = ValidatorString(4, 50, "")
+password_v = ValidatorString(10, 50, "!$#@%&?")
+lg = LoginForm(login_v, password_v)
+login, password = input().split()
+try:
+    lg.form({'login': login, 'password': password})
+except (TypeError, ValueError) as e:
+    print(e)
+else:
+    print(lg._login)
+
+    
+    
+    ##########
+    
+    
+    
+class Test:
+    def __init__(self, descr):
+        if 10 <= len(descr) <= 10000:
+            self._descr = descr
+        else:
+            raise ValueError('формулировка теста должна быть от 10 до 10 000 символов')
+
+    def run(self):
+        raise NotImplementedError('должен быть переопределен в дочернем классе')
+
+
+class TestAnsDigit(Test):
+    def __init__(self, descr, ans_digit, max_error_digit=0.01):
+        super().__init__(descr)
+        if type(ans_digit) in (int, float) and type(max_error_digit) in (int, float) and max_error_digit > 0:
+            self.ans_digit = ans_digit
+            self.max_error_digit = max_error_digit
+        else:
+            raise ValueError('недопустимые значения аргументов теста')
+
+
+    def run(self):
+        ans = float(input())
+        if self.ans_digit + self.max_error_digit >= ans >= self.ans_digit:
+            return True
+        return False
+
+
+descr, ans = map(str.strip, input().split('|'))  # например: Какое значение получится при вычислении 2+2? | 4
+ans = float(ans) # здесь для простоты полагаем, что ans точно число и ошибок в преобразовании быть не может
+try:
+    t = TestAnsDigit(descr, ans)
+    print(t.run())
+except ValueError as v:
+    print(v)
+
+# try:
+#     test = Test('descr')
+# except ValueError:
+#     assert True
+# else:
+#     assert False, "не сгенерировалось исключение ValueError при вызове инициализатора класса Test с неверным набором аргументов"
+# 
+# try:
+#     test = Test('descr ghgfhgjg ghjghjg')
+#     test.run()
+# except NotImplementedError:
+#     assert True
+# else:
+#     assert False
+# 
+# assert issubclass(TestAnsDigit, Test)
+# 
+# t = TestAnsDigit('ffhgfh fghfghfghfggfhfghfh', 1)
+# t = TestAnsDigit('ffhgfh fghfghfghfggfhfghfh', 1, 0.5)
+# 
+# try:
+#     t = TestAnsDigit('ffhgfh fghfghfghfggfhfghfh', 1, -0.5)
+# except ValueError:
+#     assert True
+# else:
+#     assert False
+
+
+
+###########
+
+
+
+class TupleLimit(tuple):
+
+    def __new__(cls, lst, max_length, *args, **kwargs):
+        if len(lst) > max_length:
+            raise ValueError('число элементов коллекции превышает заданный предел')
+        return super().__new__(cls, lst)
+
+    def __init__(self, lst, max_length):
+        self.lst = [str(i) for i in lst]
+        self._max = max_length
+
+    def __str__(self):
+        return ' '.join(self.lst)
+
+
+digits = list(map(float, input().split()))
+try:
+    t = TupleLimit(digits, max_length=5)
+    print(t)
+except ValueError as v:
+    print(v)
+    
+    
